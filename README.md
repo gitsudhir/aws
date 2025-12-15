@@ -942,6 +942,12 @@ You can check the status with:
 aws rds describe-db-instances --db-instance-identifier mydbinstance --query 'DBInstances[*].[DBInstanceIdentifier,DBInstanceStatus]' --output table
 ```
 
+Once your instance status shows as `available`, you can get the endpoint:
+
+```bash
+aws rds describe-db-instances --db-instance-identifier mydbinstance --query 'DBInstances[0].Endpoint.Address' --output text
+```
+
 ### ⭐ Getting Your RDS Endpoint
 
 Once your RDS instance status shows as `available`, you can get the endpoint to connect to it:
