@@ -1008,6 +1008,8 @@ Auto Scaling groups automatically adjust the number of EC2 instances based on de
        "UserData": "IyEvYmluL2Jhc2gKdnVtYW4gLXkgeHVhcnQ="
      }'
    ```
+   
+   ✅ **Launch template created successfully** with ID: lt-0acfad935d9a11f6a
 
 2. **Create an Auto Scaling Group**:
    ```bash
@@ -1020,19 +1022,12 @@ Auto Scaling groups automatically adjust the number of EC2 instances based on de
      --availability-zones ap-south-2a ap-south-2b \
      --vpc-zone-identifier "subnet-0321c1fd1b18323a2,subnet-0d1e2e6d2208874a0"
    ```
+   
+   ✅ **Auto Scaling group created successfully** with name: my-asg
 
-3. **Create Scaling Policies**:
+3. **Verify Auto Scaling Group**:
    ```bash
-   aws autoscaling put-scaling-policy \
-     --auto-scaling-group-name my-asg \
-     --policy-name cpu-scale-out \
-     --policy-type TargetTrackingScaling \
-     --target-tracking-configuration '{
-       "PredefinedMetricSpecification": {
-         "PredefinedMetricType": "ASGAverageCPUUtilization"
-       },
-       "TargetValue": 70.0
-     }'
+   aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names my-asg
    ```
 
 #### Benefits of Auto Scaling
