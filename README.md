@@ -333,7 +333,84 @@ If you encounter issues:
 - Check Nginx configuration: `sudo nginx -t`
 - Review Certbot logs: `sudo tail -f /var/log/letsencrypt/letsencrypt.log
 
-## 📦 Integrating with Amazon S3
+## 🛠️ Configuring AWS CLI with Your Credentials
+
+Before you can use AWS services like S3 and RDS, you need to configure your AWS CLI with your credentials.
+
+### ⭐ Setting Up AWS CLI Credentials
+
+1. **Configure AWS CLI using your CSV credentials**:
+   ```bash
+   aws configure
+   ```
+   
+   Enter the following information from your CSV file:
+   - AWS Access Key ID: (from your CSV)
+   - AWS Secret Access Key: (from your CSV)
+   - Default region name: us-east-1 (or your preferred region)
+   - Default output format: json
+
+2. **Verify your configuration**:
+   ```bash
+   aws sts get-caller-identity
+   ```
+   
+   This should return information about your AWS account.
+
+3. **Check available regions** (optional):
+   ```bash
+   aws ec2 describe-regions --output table
+   ```
+
+### ⭐ Alternative: Using Credentials File Directly
+
+You can also manually configure your credentials file:
+
+1. **Create the AWS credentials directory**:
+   ```bash
+   mkdir -p ~/.aws
+   ```
+
+2. **Create/edit the credentials file**:
+   ```bash
+   nano ~/.aws/credentials
+   ```
+   
+   Add your credentials:
+   ```ini
+   [default]
+   aws_access_key_id = YOUR_ACCESS_KEY_ID
+   aws_secret_access_key = YOUR_SECRET_ACCESS_KEY
+   ```
+
+3. **Create/edit the config file**:
+   ```bash
+   nano ~/.aws/config
+   ```
+   
+   Add your configuration:
+   ```ini
+   [default]
+   region = us-east-1
+   output = json
+   ```
+
+### ⭐ Testing Your AWS CLI Setup
+
+1. **List your S3 buckets**:
+   ```bash
+   aws s3 ls
+   ```
+
+2. **List your RDS instances**:
+   ```bash
+   aws rds describe-db-instances
+   ```
+
+3. **List your EC2 instances**:
+   ```bash
+   aws ec2 describe-instances
+   ```
 
 Amazon S3 (Simple Storage Service) is an object storage service that offers industry-leading scalability, data availability, security, and performance. You can use S3 to store static assets for your website, backups, or as a data lake for analytics.
 
