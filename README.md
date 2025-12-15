@@ -1029,6 +1029,12 @@ Auto Scaling groups automatically adjust the number of EC2 instances based on de
    ```bash
    aws autoscaling describe-auto-scaling-groups --auto-scaling-group-names my-asg
    ```
+   
+   ✅ **Auto Scaling group verified successfully**
+   - Desired capacity: 2 instances
+   - Launched instances:
+     - i-02fd0cbd8638764ee (running, Public IP: 40.192.121.224)
+     - i-0e298b4fbac6540e7 (running, Public IP: 18.60.148.223)
 
 #### Benefits of Auto Scaling
 - **Cost Efficiency**: Automatically scale down during low demand
