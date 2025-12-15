@@ -1050,6 +1050,11 @@ Read replicas help distribute read traffic across multiple database instances, i
      --db-instance-class db.t3.micro \
      --availability-zone ap-south-2b
    ```
+   
+   ✅ **Read replica creation initiated successfully** with identifier: mydbinstance-replica
+   - Status: creating
+   - Source: mydbinstance
+   - Availability Zone: ap-south-2b
 
 2. **Monitor Replica Status**:
    ```bash
@@ -1058,14 +1063,14 @@ Read replicas help distribute read traffic across multiple database instances, i
 
 #### Using Read Replicas
 
-1. **Direct Read Traffic**: Route read queries to the replica:
+1. **Direct Read Traffic**: Once available, route read queries to the replica:
    ```bash
    mysql -h mydbinstance-replica.c3y8ucwsg7fo.ap-south-2.rds.amazonaws.com -P 3306 -u adminuser -p
    ```
 
 2. **Application-Level Routing**: Configure your application to:
-   - Send write operations to the primary instance
-   - Send read operations to the replica(s)
+   - Send write operations to the primary instance (mydbinstance)
+   - Send read operations to the replica (mydbinstance-replica)
 
 #### Benefits of Read Replicas
 - **Improved Performance**: Distribute read load across multiple instances
