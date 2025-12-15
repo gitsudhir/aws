@@ -756,33 +756,43 @@ From your EC2 instance, you can connect using:
 mysql -h mydbinstance.cuz2ueeq2r1m.us-east-1.rds.amazonaws.com -P 3306 -u adminuser -p
 ```
 
-### ⭐ Security Considerations
+### ⭐ Current Security Group Configuration
 
-Your database is protected by:
-1. **Network Security**: Security groups that control access
-2. **Authentication**: Username/password authentication
-3. **Encryption**: Data in transit is encrypted by default
-4. **IAM Authentication**: Optional IAM database authentication (not enabled by default)
+Your RDS instance is currently using the default security group (sg-01e6aa0f0210f8cdc) for VPC vpc-01830a3ec6f193c0c. The current configuration only allows:
 
-To modify who can access your database:
-1. In the RDS console, select your database instance
-2. Go to the "Connectivity & security" tab
-3. Find "Security" and click on your VPC security group(s)
-4. Modify the inbound rules to allow connections from specific sources
+1. **Inbound Traffic**: 
+   - All protocols (-1) from other instances in the same security group
+   - No explicit rules allowing external connections on port 3306
 
-⚠️ **Important Security Note**: Since your EC2 instance may be in a different VPC/region, you'll need to configure the RDS security group to allow connections from your EC2 instance's public IP address.
+2. **Outbound Traffic**:
+   - All traffic (0.0.0.0/0) - unrestricted outbound access
 
-To allow connections from your EC2 instance:
-1. In the EC2 Console, note your instance's public IP: 18.60.184.7
-2. In the EC2 Console, go to "Security Groups"
-3. Find the security group associated with your RDS instance (sg-01e6aa0f0210f8cdc)
-4. Add an inbound rule:
-   - Type: MySQL/Aurora (or Custom TCP)
-   - Port: 3306
-   - Source: 18.60.184.7/32 (your EC2 instance's public IP with /32 CIDR notation)
-   - Description: "Allow MySQL access from EC2 instance"
+⚠️ **This configuration explains why you can't connect to your RDS instance from your EC2 instance in a different VPC/region.**
 
-If you don't have permissions to modify security groups, ask your AWS administrator to add this rule.
+### ⭐ Required Security Group Changes
+
+To connect from your EC2 instance at 18.60.184.7, you need to add an inbound rule to allow MySQL traffic:
+
+1. In the AWS Console (EC2 > Security Groups):
+   - Find security group sg-01e6aa0f0210f8cdc
+   - Add inbound rule:
+     - Type: MySQL/Aurora (or Custom TCP)
+     - Protocol: TCP
+     - Port Range: 3306
+     - Source: 18.60.184.7/32
+     - Description: "MySQL access from EC2 instance"
+
+2. Alternatively, using AWS CLI (if you have permissions):
+   ```bash
+   aws ec2 authorize-security-group-ingress \
+     --group-id sg-01e6aa0f0210f8cdc \
+     --protocol tcp \
+     --port 3306 \
+     --cidr 18.60.184.7/32 \
+     --description "MySQL access from EC2 instance"
+   ```
+
+⚠️ **Security Note**: For production environments, consider using more restrictive security group rules and VPC peering instead of allowing connections from specific IP addresses.
 
 ## 🔍 Monitoring and Maintaining Your RDS Instance
 
