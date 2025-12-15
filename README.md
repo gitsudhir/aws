@@ -1064,6 +1064,23 @@ A load balancer distributes incoming traffic across multiple instances, improvin
    ✅ **Listener created successfully**
    - ARN: arn:aws:elasticloadbalancing:ap-south-2:238323584764:listener/app/my-alb/20dc71c10e9c90eb/9c9cfc2637c017b1
 
+#### Accessing Your Load Balancer
+
+Once your load balancer is active, you can access your application through its DNS name:
+- **DNS Name**: my-alb-464169252.ap-south-2.elb.amazonaws.com
+
+You can check the load balancer status with:
+```bash
+aws elbv2 describe-load-balancers --names my-alb
+```
+
+And check target health with:
+```bash
+aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:ap-south-2:238323584764:targetgroup/my-targets/feca944debb1eba3
+```
+
+⏳ **Load balancer is currently provisioning** and targets are registering. This process typically takes a few minutes to complete.
+
 #### Benefits of Load Balancers
 - **High Availability**: Distributes traffic across multiple instances
 - **Fault Tolerance**: Automatically routes traffic away from unhealthy instances
