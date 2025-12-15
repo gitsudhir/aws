@@ -788,9 +788,10 @@ To connect from your EC2 instance at 18.60.184.7, you need to add an inbound rul
      --group-id sg-01e6aa0f0210f8cdc \
      --protocol tcp \
      --port 3306 \
-     --cidr 18.60.184.7/32 \
-     --description "MySQL access from EC2 instance"
+     --cidr 18.60.184.7/32
    ```
+   
+   ⚠️ **Note**: If you receive an "UnauthorizedOperation" error, it means your AWS user doesn't have the necessary permissions (`ec2:AuthorizeSecurityGroupIngress`). In this case, you'll need to ask your AWS administrator to add this rule for you.
 
 ⚠️ **Security Note**: For production environments, consider using more restrictive security group rules and VPC peering instead of allowing connections from specific IP addresses.
 
