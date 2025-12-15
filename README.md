@@ -1004,23 +1004,31 @@ A load balancer distributes incoming traffic across multiple instances, improvin
      --vpc-id vpc-0df0eef60eb4881c6
    ```
    
+   ✅ **Security group created successfully** with ID: sg-0278713dad1019abc
+   
    Then add inbound rules:
    ```bash
    aws ec2 authorize-security-group-ingress \
-     --group-id sg-0NEWGROUPID \
+     --group-id sg-0278713dad1019abc \
      --protocol tcp \
      --port 80 \
      --cidr 0.0.0.0/0
    ```
+   
+   ✅ **Inbound rule added successfully** to allow HTTP traffic
 
 2. **Create the Application Load Balancer**:
    ```bash
    aws elbv2 create-load-balancer \
      --name my-alb \
      --subnets subnet-0321c1fd1b18323a2 subnet-0d1e2e6d2208874a0 \
-     --security-groups sg-0NEWGROUPID \
+     --security-groups sg-0278713dad1019abc \
      --type application
    ```
+   
+   ✅ **Load balancer created successfully** with name: my-alb
+   - DNS Name: my-alb-464169252.ap-south-2.elb.amazonaws.com
+   - Status: provisioning
 
 3. **Create a Target Group**:
    ```bash
@@ -1031,22 +1039,30 @@ A load balancer distributes incoming traffic across multiple instances, improvin
      --vpc-id vpc-0df0eef60eb4881c6 \
      --health-check-path /
    ```
+   
+   ✅ **Target group created successfully** with name: my-targets
+   - ARN: arn:aws:elasticloadbalancing:ap-south-2:238323584764:targetgroup/my-targets/feca944debb1eba3
 
 4. **Register Instances with the Target Group**:
    ```bash
    aws elbv2 register-targets \
-     --target-group-arn arn:aws:elasticloadbalancing:ap-south-2:123456789012:targetgroup/my-targets/1234567890123456 \
+     --target-group-arn arn:aws:elasticloadbalancing:ap-south-2:238323584764:targetgroup/my-targets/feca944debb1eba3 \
      --targets Id=i-02fd0cbd8638764ee Id=i-0e298b4fbac6540e7
    ```
+   
+   ✅ **Instances registered successfully** with the target group
 
 5. **Create a Listener**:
    ```bash
    aws elbv2 create-listener \
-     --load-balancer-arn arn:aws:elasticloadbalancing:ap-south-2:123456789012:loadbalancer/app/my-alb/1234567890123456 \
+     --load-balancer-arn arn:aws:elasticloadbalancing:ap-south-2:238323584764:loadbalancer/app/my-alb/20dc71c10e9c90eb \
      --protocol HTTP \
      --port 80 \
-     --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:ap-south-2:123456789012:targetgroup/my-targets/1234567890123456
+     --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:ap-south-2:238323584764:targetgroup/my-targets/feca944debb1eba3
    ```
+   
+   ✅ **Listener created successfully**
+   - ARN: arn:aws:elasticloadbalancing:ap-south-2:238323584764:listener/app/my-alb/20dc71c10e9c90eb/9c9cfc2637c017b1
 
 #### Benefits of Load Balancers
 - **High Availability**: Distributes traffic across multiple instances
