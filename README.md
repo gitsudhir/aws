@@ -790,6 +790,27 @@ If you're unable to connect to your RDS instance, check these common issues:
      sudo iptables -L
      ```
 
+### ⭐ Handling Permission Issues with RDS
+
+If you encounter permission errors when trying to describe your RDS instances, it may be due to insufficient IAM permissions. The user who creates an RDS instance may not automatically have permissions to describe or modify it.
+
+To resolve this issue:
+
+1. **Check your current permissions**:
+   ```bash
+   aws sts get-caller-identity
+   ```
+
+2. **Request additional RDS permissions** from your AWS administrator:
+   - `rds:DescribeDBInstances`
+   - `rds:ModifyDBInstance`
+   - `rds:DeleteDBInstance`
+   - `rds:RebootDBInstance`
+
+3. **Alternative: Use the AWS Console** to monitor your RDS instance status and get endpoint information if CLI access is restricted.
+
+4. **Wait for the instance to be fully available** before attempting connections. You can check the AWS RDS Console for status updates.
+
 ### ⭐ Connecting to Your RDS Instance from EC2
 
 1. **Install MySQL client on your EC2 instance**:
