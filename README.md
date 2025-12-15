@@ -770,6 +770,20 @@ To modify who can access your database:
 3. Find "Security" and click on your VPC security group(s)
 4. Modify the inbound rules to allow connections from specific sources
 
+⚠️ **Important Security Note**: Since your EC2 instance may be in a different VPC/region, you'll need to configure the RDS security group to allow connections from your EC2 instance's public IP address.
+
+To allow connections from your EC2 instance:
+1. In the EC2 Console, note your instance's public IP: 18.60.184.7
+2. In the EC2 Console, go to "Security Groups"
+3. Find the security group associated with your RDS instance (sg-01e6aa0f0210f8cdc)
+4. Add an inbound rule:
+   - Type: MySQL/Aurora (or Custom TCP)
+   - Port: 3306
+   - Source: 18.60.184.7/32 (your EC2 instance's public IP with /32 CIDR notation)
+   - Description: "Allow MySQL access from EC2 instance"
+
+If you don't have permissions to modify security groups, ask your AWS administrator to add this rule.
+
 ## 🔍 Monitoring and Maintaining Your RDS Instance
 
 ### ⭐ Monitoring Database Performance
