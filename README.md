@@ -728,10 +728,10 @@ In your case, the endpoint is:
 
 2. **Connect to your RDS instance**:
    ```bash
-   mysql -h YOUR_RDS_ENDPOINT -P 3306 -u adminuser -p
+   mysql -h mydbinstance.cuz2ueeq2r1m.us-east-1.rds.amazonaws.com -P 3306 -u adminuser -p
    ```
    
-   Replace `YOUR_RDS_ENDPOINT` with the endpoint you obtained above.
+   When prompted, enter the password you used when creating the RDS instance: `YourSecurePassword123!`
 
 3. **Test the connection with a simple query**:
    ```sql
