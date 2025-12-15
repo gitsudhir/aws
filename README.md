@@ -1068,6 +1068,11 @@ Read replicas help distribute read traffic across multiple database instances, i
    ```
    
    ⏳ **Read replica is still being created**. This process typically takes 5-10 minutes to complete.
+   
+   Once the replica status shows as "available", you can get its endpoint:
+   ```bash
+   aws rds describe-db-instances --db-instance-identifier mydbinstance-replica --query 'DBInstances[0].Endpoint.Address' --output text
+   ```
 
 #### Using Read Replicas
 
