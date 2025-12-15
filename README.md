@@ -702,6 +702,8 @@ Look for the `DBInstanceStatus` field in the response:
 - `modifying`: The instance is being modified
 - `backing-up`: The instance is being backed up
 
+✅ **Your RDS instance is now available and ready for use!**
+
 ### ⭐ Getting Your RDS Endpoint
 
 Once your RDS instance status shows as `available`, you can get the endpoint to connect to it:
