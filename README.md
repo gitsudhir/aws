@@ -948,6 +948,10 @@ Once your instance status shows as `available`, you can get the endpoint:
 aws rds describe-db-instances --db-instance-identifier mydbinstance --query 'DBInstances[0].Endpoint.Address' --output text
 ```
 
+✅ **Your RDS instance endpoint is now available!**
+- **Endpoint**: mydbinstance.c3y8ucwsg7fo.ap-south-2.rds.amazonaws.com
+- **Port**: 3306 (default MySQL port)
+
 ### ⭐ Getting Your RDS Endpoint
 
 Once your RDS instance status shows as `available`, you can get the endpoint to connect to it:
