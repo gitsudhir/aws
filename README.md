@@ -713,6 +713,11 @@ aws rds describe-db-instances --db-instance-identifier mydbinstance --query 'DBI
 This will return the endpoint address, which will look something like:
 `mydbinstance.abcdefg1234567.us-east-1.rds.amazonaws.com`
 
+In your case, the endpoint is:
+`mydbinstance.cuz2ueeq2r1m.us-east-1.rds.amazonaws.com`
+
+### ⭐ Connecting to Your RDS Instance from EC2
+
 ### ⭐ Connecting to Your RDS Instance from EC2
 
 1. **Install MySQL client on your EC2 instance**:
