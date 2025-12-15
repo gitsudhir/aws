@@ -994,7 +994,14 @@ Your RDS instance is using the same security group (sg-033a5beaa1e43ca65) as you
 aws ec2 describe-security-groups --group-ids sg-033a5beaa1e43ca65
 ```
 
-The security group should allow inbound traffic on port 3306 from within the same security group, enabling communication between your EC2 instance and RDS instance.
+✅ **Security Group Updated**: You've successfully added an inbound rule to allow MySQL traffic (port 3306) within the same security group. This enables communication between your EC2 instance and RDS instance.
+
+The security group now allows:
+- SSH access (port 22) from anywhere (0.0.0.0/0)
+- HTTP access (port 80) from anywhere (0.0.0.0/0)
+- MySQL access (port 3306) from within the same security group
+
+This configuration ensures that your EC2 instance can connect to your RDS instance while maintaining appropriate security boundaries.
 
 ### ⭐ Getting Your RDS Endpoint
 
