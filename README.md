@@ -412,6 +412,106 @@ You can also manually configure your credentials file:
    aws ec2 describe-instances
    ```
 
+## 🔒 Advanced: Setting Up SSL with Let's Encrypt (Certbot) on EC2
+
+Even without extensive AWS permissions, you can set up SSL certificates directly on your EC2 instance using Let's Encrypt.
+
+### ⭐ Installing Certbot on Your EC2 Instance
+
+1. **Update package list and install Certbot**:
+   ```bash
+   sudo apt update
+   sudo apt install certbot python3-certbot-nginx -y
+   ```
+
+2. **Stop Nginx temporarily** (required for standalone verification):
+   ```bash
+   sudo systemctl stop nginx
+   ```
+
+3. **Obtain SSL certificate**:
+   ```bash
+   sudo certbot certonly --standalone -d your-domain.com -d www.your-domain.com
+   ```
+   
+   Replace `your-domain.com` with your actual domain name.
+
+4. **Start Nginx again**:
+   ```bash
+   sudo systemctl start nginx
+   ```
+
+### ⭐ Configuring Nginx to Use SSL
+
+1. **Edit your Nginx configuration**:
+   ```bash
+   sudo nano /etc/nginx/sites-available/default
+   ```
+
+2. **Add SSL server block**:
+   ```nginx
+   server {
+       listen 80;
+       server_name your-domain.com www.your-domain.com;
+       return 301 https://$server_name$request_uri;
+   }
+
+   server {
+       listen 443 ssl;
+       server_name your-domain.com www.your-domain.com;
+
+       ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+       ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+
+       root /var/www/html;
+       index index.html index.htm index.nginx-debian.html;
+
+       location / {
+           try_files $uri $uri/ =404;
+       }
+   }
+   ```
+
+3. **Test and reload Nginx**:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+
+### ⭐ Setting Up Automatic Certificate Renewal
+
+1. **Test automatic renewal**:
+   ```bash
+   sudo certbot renew --dry-run
+   ```
+
+2. **Create a cron job for automatic renewal**:
+   ```bash
+   sudo crontab -e
+   ```
+   
+   Add this line to run renewal twice daily:
+   ```
+   0 12 * * * /usr/bin/certbot renew --quiet
+   ```
+
+### ⭐ Troubleshooting SSL Issues
+
+1. **Check certificate expiration**:
+   ```bash
+   echo | openssl s_client -connect your-domain.com:443 2>/dev/null | openssl x509 -noout -dates
+   ```
+
+2. **View certificate details**:
+   ```bash
+   sudo openssl x509 -in /etc/letsencrypt/live/your-domain.com/cert.pem -text -noout
+   ```
+
+3. **Check Certbot logs**:
+   ```bash
+   sudo tail -f /var/log/letsencrypt/letsencrypt.log
+   ```
+
 Amazon S3 (Simple Storage Service) is an object storage service that offers industry-leading scalability, data availability, security, and performance. You can use S3 to store static assets for your website, backups, or as a data lake for analytics.
 
 ### ⭐ Setting Up S3 Bucket for Static Website Hosting
