@@ -1058,7 +1058,7 @@ Read replicas help distribute read traffic across multiple database instances, i
    ```
    
    ✅ **Read replica creation initiated successfully** with identifier: mydbinstance-replica
-   - Status: creating
+   - Status: creating (may take 5-10 minutes to complete)
    - Source: mydbinstance
    - Availability Zone: ap-south-2b
 
@@ -1066,6 +1066,8 @@ Read replicas help distribute read traffic across multiple database instances, i
    ```bash
    aws rds describe-db-instances --db-instance-identifier mydbinstance-replica
    ```
+   
+   ⏳ **Read replica is still being created**. This process typically takes 5-10 minutes to complete.
 
 #### Using Read Replicas
 
