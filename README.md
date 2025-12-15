@@ -952,6 +952,48 @@ aws rds describe-db-instances --db-instance-identifier mydbinstance --query 'DBI
 - **Endpoint**: mydbinstance.c3y8ucwsg7fo.ap-south-2.rds.amazonaws.com
 - **Port**: 3306 (default MySQL port)
 
+### ⭐ Connecting to Your New RDS Instance from EC2
+
+Since your RDS instance and EC2 instance are in the same region and VPC, connecting to the database should be straightforward:
+
+1. **SSH into your EC2 instance**:
+   ```bash
+   ssh -i aws-ec2-key-sk.pem ubuntu@18.60.184.7
+   ```
+
+2. **Install MySQL client on your EC2 instance** (if not already installed):
+   ```bash
+   sudo apt update
+   sudo apt install mysql-client -y
+   ```
+
+3. **Connect to your RDS instance**:
+   ```bash
+   mysql -h mydbinstance.c3y8ucwsg7fo.ap-south-2.rds.amazonaws.com -P 3306 -u adminuser -p
+   ```
+   
+   When prompted, enter the password you specified when creating the RDS instance: `YourSecurePassword123!`
+
+4. **Test the connection with a simple query**:
+   ```sql
+   SHOW DATABASES;
+   CREATE DATABASE myapp;
+   USE myapp;
+   CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100));
+   INSERT INTO users (name, email) VALUES ('John Doe', 'john@example.com');
+   SELECT * FROM users;
+   ```
+
+### ⭐ Verifying Security Group Configuration
+
+Your RDS instance is using the same security group (sg-033a5beaa1e43ca65) as your EC2 instance, which means they can communicate with each other within the VPC. You can verify this configuration:
+
+```bash
+aws ec2 describe-security-groups --group-ids sg-033a5beaa1e43ca65
+```
+
+The security group should allow inbound traffic on port 3306 from within the same security group, enabling communication between your EC2 instance and RDS instance.
+
 ### ⭐ Getting Your RDS Endpoint
 
 Once your RDS instance status shows as `available`, you can get the endpoint to connect to it:
