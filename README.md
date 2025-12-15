@@ -1066,7 +1066,7 @@ A load balancer distributes incoming traffic across multiple instances, improvin
 
 #### Accessing Your Load Balancer
 
-Once your load balancer is active, you can access your application through its DNS name:
+✅ **Load balancer is now active** and ready to distribute traffic!
 - **DNS Name**: my-alb-464169252.ap-south-2.elb.amazonaws.com
 
 You can check the load balancer status with:
@@ -1079,7 +1079,20 @@ And check target health with:
 aws elbv2 describe-target-health --target-group-arn arn:aws:elasticloadbalancing:ap-south-2:238323584764:targetgroup/my-targets/feca944debb1eba3
 ```
 
-⏳ **Load balancer is currently provisioning** and targets are registering. This process typically takes a few minutes to complete.
+⚠️ **Targets are currently showing as unhealthy** because there's no web server running on port 80 on your instances. To fix this:
+
+1. **Install a web server on your instances**:
+   ```bash
+   # SSH into each instance and install Nginx
+   sudo apt update
+   sudo apt install nginx -y
+   sudo systemctl start nginx
+   sudo systemctl enable nginx
+   ```
+
+2. **Or modify your launch template** to automatically install a web server when new instances are launched.
+
+Once a web server is running on port 80, the targets should become healthy and the load balancer will be able to distribute traffic to your instances.
 
 #### Benefits of Load Balancers
 - **High Availability**: Distributes traffic across multiple instances
