@@ -723,6 +723,51 @@ This will return the endpoint address, which will look something like:
 
 2. **Connect to your RDS instance**:
    ```bash
+   mysql -h YOUR_RDS_ENDPOINT -P 3306 -u adminuser -p
+   ```
+   
+   Replace `YOUR_RDS_ENDPOINT` with the endpoint you obtained above.
+
+3. **Test the connection with a simple query**:
+   ```sql
+   SHOW DATABASES;
+   CREATE DATABASE myapp;
+   USE myapp;
+   CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), email VARCHAR(100));
+   INSERT INTO users (name, email) VALUES ('John Doe', 'john@example.com');
+   SELECT * FROM users;
+   ```
+
+### ⭐ Configuring Security for RDS Access
+
+To connect to your RDS instance from your EC2 instance, you may need to modify the security group associated with your RDS instance:
+
+1. **Get your EC2 instance's security group ID**:
+   ```bash
+   aws ec2 describe-instances --instance-ids i-00d8a7ab13c96d8c2 --query 'Reservations[0].Instances[0].SecurityGroups[0].GroupId' --output text
+   ```
+
+2. **Add inbound rule to RDS security group**:
+   ```bash
+   aws ec2 authorize-security-group-ingress \
+     --group-id sg-01e6aa0f0210f8cdc \
+     --protocol tcp \
+     --port 3306 \
+     --source-group YOUR_EC2_SECURITY_GROUP_ID
+   ```
+   
+   Replace `YOUR_EC2_SECURITY_GROUP_ID` with the security group ID of your EC2 instance.
+
+### ⭐ Connecting to Your RDS Instance from EC2
+
+1. **Install MySQL client on your EC2 instance**:
+   ```bash
+   sudo apt update
+   sudo apt install mysql-client -y
+   ```
+
+2. **Connect to your RDS instance**:
+   ```bash
    mysql -h your-rds-endpoint.region.rds.amazonaws.com -P 3306 -u admin -p
    ```
 
