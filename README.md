@@ -751,6 +751,8 @@ To connect to your RDS instance from your EC2 instance, you may need to modify t
    ```bash
    aws ec2 describe-instances --instance-ids i-00d8a7ab13c96d8c2 --query 'Reservations[0].Instances[0].SecurityGroups[0].GroupId' --output text
    ```
+   
+   _Note: If you encounter permission errors, you may need to ask your AWS administrator for the security group ID or find it in the EC2 Console._
 
 2. **Add inbound rule to RDS security group**:
    ```bash
@@ -762,6 +764,8 @@ To connect to your RDS instance from your EC2 instance, you may need to modify t
    ```
    
    Replace `YOUR_EC2_SECURITY_GROUP_ID` with the security group ID of your EC2 instance.
+   
+   _Note: If you don't have permissions to modify security groups, ask your AWS administrator to add an inbound rule allowing TCP traffic on port 3306 from your EC2 instance's security group._
 
 ### ⭐ Troubleshooting RDS Connection Issues
 
