@@ -688,6 +688,31 @@ Amazon RDS makes it easy to set up, operate, and scale a relational database in 
    aws rds describe-db-instances --db-instance-identifier mydbinstance
    ```
 
+### ⭐ Monitoring Your RDS Instance Creation
+
+Your RDS instance is currently being created. You can monitor its status with:
+
+```bash
+aws rds describe-db-instances --db-instance-identifier mydbinstance
+```
+
+Look for the `DBInstanceStatus` field in the response:
+- `creating`: The instance is being provisioned
+- `available`: The instance is ready for use
+- `modifying`: The instance is being modified
+- `backing-up`: The instance is being backed up
+
+### ⭐ Getting Your RDS Endpoint
+
+Once your RDS instance status shows as `available`, you can get the endpoint to connect to it:
+
+```bash
+aws rds describe-db-instances --db-instance-identifier mydbinstance --query 'DBInstances[0].Endpoint.Address' --output text
+```
+
+This will return the endpoint address, which will look something like:
+`mydbinstance.abcdefg1234567.us-east-1.rds.amazonaws.com`
+
 ### ⭐ Connecting to Your RDS Instance from EC2
 
 1. **Install MySQL client on your EC2 instance**:
