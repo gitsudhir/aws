@@ -990,6 +990,70 @@ Since your RDS instance and EC2 instance are in the same region and VPC, connect
 
 Now that you have a working EC2-RDS setup, let's explore scaling options to handle increased traffic and ensure high availability.
 
+### ⭐ Load Balancer for EC2 Instances
+
+A load balancer distributes incoming traffic across multiple instances, improving availability and fault tolerance.
+
+#### Creating an Application Load Balancer
+
+1. **Create a Security Group for the Load Balancer**:
+   ```bash
+   aws ec2 create-security-group \
+     --group-name my-alb-sg \
+     --description "Security group for ALB" \
+     --vpc-id vpc-0df0eef60eb4881c6
+   ```
+   
+   Then add inbound rules:
+   ```bash
+   aws ec2 authorize-security-group-ingress \
+     --group-id sg-0NEWGROUPID \
+     --protocol tcp \
+     --port 80 \
+     --cidr 0.0.0.0/0
+   ```
+
+2. **Create the Application Load Balancer**:
+   ```bash
+   aws elbv2 create-load-balancer \
+     --name my-alb \
+     --subnets subnet-0321c1fd1b18323a2 subnet-0d1e2e6d2208874a0 \
+     --security-groups sg-0NEWGROUPID \
+     --type application
+   ```
+
+3. **Create a Target Group**:
+   ```bash
+   aws elbv2 create-target-group \
+     --name my-targets \
+     --protocol HTTP \
+     --port 80 \
+     --vpc-id vpc-0df0eef60eb4881c6 \
+     --health-check-path /
+   ```
+
+4. **Register Instances with the Target Group**:
+   ```bash
+   aws elbv2 register-targets \
+     --target-group-arn arn:aws:elasticloadbalancing:ap-south-2:123456789012:targetgroup/my-targets/1234567890123456 \
+     --targets Id=i-02fd0cbd8638764ee Id=i-0e298b4fbac6540e7
+   ```
+
+5. **Create a Listener**:
+   ```bash
+   aws elbv2 create-listener \
+     --load-balancer-arn arn:aws:elasticloadbalancing:ap-south-2:123456789012:loadbalancer/app/my-alb/1234567890123456 \
+     --protocol HTTP \
+     --port 80 \
+     --default-actions Type=forward,TargetGroupArn=arn:aws:elasticloadbalancing:ap-south-2:123456789012:targetgroup/my-targets/1234567890123456
+   ```
+
+#### Benefits of Load Balancers
+- **High Availability**: Distributes traffic across multiple instances
+- **Fault Tolerance**: Automatically routes traffic away from unhealthy instances
+- **Scalability**: Seamlessly integrates with Auto Scaling groups
+- **Security**: Centralized SSL termination and security policies
+
 ### ⭐ Auto Scaling Groups for EC2 Instances
 
 Auto Scaling groups automatically adjust the number of EC2 instances based on demand, ensuring your application has the right amount of compute capacity.
