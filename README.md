@@ -331,4 +331,146 @@ If you encounter issues:
 - Ensure your domain (sudhirkumar.in) points to the correct IP address (18.60.184.7)
 - Verify ports 80 and 443 are accessible (required for HTTP challenge)
 - Check Nginx configuration: `sudo nginx -t`
-- Review Certbot logs: `sudo tail -f /var/log/letsencrypt/letsencrypt.log`
+- Review Certbot logs: `sudo tail -f /var/log/letsencrypt/letsencrypt.log
+
+## 📦 Integrating with Amazon S3
+
+Amazon S3 (Simple Storage Service) is an object storage service that offers industry-leading scalability, data availability, security, and performance. You can use S3 to store static assets for your website, backups, or as a data lake for analytics.
+
+### ⭐ Setting Up S3 Bucket for Static Website Hosting
+
+1. **Create an S3 bucket**:
+   ```bash
+   # Install AWS CLI if not already installed
+   sudo apt update
+   sudo apt install awscli -y
+   
+   # Configure AWS CLI with your credentials
+   aws configure
+   # Enter your AWS Access Key ID, Secret Access Key, region (us-east-1), and output format (json)
+   
+   # Create S3 bucket (replace 'your-unique-bucket-name' with a globally unique name)
+   aws s3 mb s3://your-unique-bucket-name
+   
+   # Enable static website hosting
+   aws s3 website s3://your-unique-bucket-name --index-document index.html --error-document error.html
+   ```
+
+2. **Upload your website files**:
+   ```bash
+   # Upload files to your S3 bucket
+   aws s3 cp /var/www/html/ s3://your-unique-bucket-name --recursive
+   
+   # Set public read permissions
+   aws s3api put-bucket-policy --bucket your-unique-bucket-name --policy '{
+     "Version": "2012-10-17",
+     "Statement": [
+       {
+         "Sid": "PublicReadGetObject",
+         "Effect": "Allow",
+         "Principal": "*",
+         "Action": "s3:GetObject",
+         "Resource": "arn:aws:s3:::your-unique-bucket-name/*"
+       }
+     ]
+   }'
+   ```
+
+3. **Access your website**:
+   Your website will be available at:
+   ```
+   http://your-unique-bucket-name.s3-website-us-east-1.amazonaws.com
+   ```
+
+### ⭐ Using S3 for Media Assets with Nginx
+
+You can configure Nginx to serve media assets directly from S3 while keeping your main application on EC2:
+
+1. **Modify your Nginx configuration**:
+   ```bash
+   sudo nano /etc/nginx/sites-available/default
+   ```
+   
+   Add a location block for media assets:
+   ```nginx
+   location /media/ {
+       proxy_pass https://your-s3-bucket.s3.amazonaws.com/;
+       proxy_set_header Host your-s3-bucket.s3.amazonaws.com;
+   }
+   ```
+
+2. **Test and reload Nginx**:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+
+### ⭐ S3 Backup Strategy
+
+Set up automated backups of your EC2 instance data to S3:
+
+1. **Create a backup script**:
+   ```bash
+   nano ~/backup-to-s3.sh
+   ```
+   
+   Add the following content:
+   ```bash
+   #!/bin/bash
+   DATE=$(date +%Y-%m-%d-%H-%M-%S)
+   BACKUP_NAME="backup-$DATE.tar.gz"
+   
+   # Create archive of important directories
+   tar -czf /tmp/$BACKUP_NAME /var/www/html /etc/nginx
+   
+   # Upload to S3
+   aws s3 cp /tmp/$BACKUP_NAME s3://your-backup-bucket/backups/
+   
+   # Remove local backup file
+   rm /tmp/$BACKUP_NAME
+   
+   echo "Backup completed: $BACKUP_NAME"
+   ```
+
+2. **Make the script executable and schedule it**:
+   ```bash
+   chmod +x ~/backup-to-s3.sh
+   
+   # Add to crontab to run daily at 2 AM
+   (crontab -l 2>/dev/null; echo "0 2 * * * /home/ubuntu/backup-to-s3.sh") | crontab -
+   ```
+
+### ⭐ Security Best Practices for S3
+
+1. **Block public access** unless absolutely necessary:
+   ```bash
+   aws s3api put-public-access-block --bucket your-bucket-name --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+   ```
+
+2. **Enable server-side encryption**:
+   ```bash
+   aws s3api put-bucket-encryption --bucket your-bucket-name --server-side-encryption-configuration '{
+     "Rules": [
+       {
+         "ApplyServerSideEncryptionByDefault": {
+           "SSEAlgorithm": "AES256"
+         }
+       }
+     ]
+   }'
+   ```
+
+3. **Enable versioning for data protection**:
+   ```bash
+   aws s3api put-bucket-versioning --bucket your-bucket-name --versioning-configuration Status=Enabled
+   ```
+
+4. **Enable logging**:
+   ```bash
+   aws s3api put-bucket-logging --bucket your-bucket-name --bucket-logging-status '{
+     "LoggingEnabled": {
+       "TargetBucket": "your-log-bucket",
+       "TargetPrefix": "logs/"
+     }
+   }'
+   ```
